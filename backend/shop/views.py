@@ -3,6 +3,7 @@ from urllib.parse import quote
 from django.conf import settings
 from django.core.paginator import Paginator
 from django.db.models import Q
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 
 from .models import Category, Product
@@ -166,5 +167,22 @@ def contacts(request):
     return render(request, "shop/contacts.html")
 
 
+def health(request):
+    return HttpResponse("OK", content_type="text/plain")
+
+
+def robots_txt(request):
+    lines = [
+        "User-agent: *",
+        "Allow: /",
+        f"Sitemap: {request.build_absolute_uri('/sitemap.xml')}",
+    ]
+    return HttpResponse("\n".join(lines), content_type="text/plain")
+
+
 def custom_404(request, exception):
     return render(request, "shop/404.html", status=404)
+
+
+def custom_500(request):
+    return render(request, "500.html", status=500)
