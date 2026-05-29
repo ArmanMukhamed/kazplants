@@ -2,15 +2,30 @@ from urllib.parse import quote
 
 from django.conf import settings
 from django.core.paginator import Paginator
-from django.db.models import Q
+from django.db.models import Case, IntegerField, Q, Value, When
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 
 from .models import Category, Product
 
 
+def ordered_categories():
+    order_map = {
+        "derevya-i-sazhency": 1,
+        "komnatnye-rasteniya": 2,
+        "cvety": 3,
+        "derevya-i-kustarniki": 4,
+        "kashpo-i-aksessuary": 5,
+        "gotovye-resheniya": 6,
+    }
+    whens = [When(slug=slug, then=Value(pos)) for slug, pos in order_map.items()]
+    return Category.objects.annotate(
+        order_rank=Case(*whens, default=Value(100), output_field=IntegerField())
+    ).order_by("order_rank", "name")
+
+
 def home(request):
-    categories_qs = Category.objects.all()
+    categories_qs = ordered_categories()
     popular_products = Product.objects.filter(is_active=True, is_popular=True).select_related("category")[:8]
     new_products = Product.objects.filter(is_active=True, is_new=True).select_related("category")[:8]
 
@@ -42,7 +57,7 @@ def catalog(request):
     max_diameter = request.GET.get("max_diameter", "").strip()
 
     products = Product.objects.filter(is_active=True).select_related("category")
-    categories_qs = Category.objects.all()
+    categories_qs = ordered_categories()
 
     if query:
         products = products.filter(
@@ -107,7 +122,7 @@ def catalog(request):
 
 
 def categories(request):
-    categories_qs = Category.objects.all()
+    categories_qs = ordered_categories()
     return render(request, "shop/categories.html", {"categories": categories_qs})
 
 

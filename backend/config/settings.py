@@ -2,12 +2,29 @@
 Django settings for config project.
 """
 
+import os
 from pathlib import Path
 
-from decouple import Csv, config
+try:
+    from decouple import Csv, config
+except ModuleNotFoundError:
+    class Csv:
+        def __call__(self, value):
+            if value is None:
+                return []
+            return [item.strip() for item in str(value).split(",") if item.strip()]
+
+    def config(name, default=None, cast=None):
+        value = os.environ.get(name, default)
+        if cast is None:
+            return value
+        if isinstance(cast, Csv):
+            return cast(value)
+        return cast(value)
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 PROJECT_DIR = BASE_DIR.parent
+
 
 def env_bool(name, default=False):
     raw = str(config(name, default=str(default))).strip().lower()
@@ -90,7 +107,6 @@ TIME_ZONE = "Asia/Almaty"
 USE_I18N = True
 USE_TZ = True
 
-# Static and media readiness (collectstatic + uploaded media).
 STATIC_URL = "static/"
 STATICFILES_DIRS = [
     PROJECT_DIR / "static",
@@ -100,18 +116,27 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 MEDIA_URL = "media/"
 MEDIA_ROOT = PROJECT_DIR / "media"
 
-# Store profile from environment.
 STORE_PROFILE = {
     "name": config("STORE_NAME", default="Kazplants"),
-    "whatsapp_phone": config("WHATSAPP_PHONE", default="77757560046"),
-    "instagram_url": config("INSTAGRAM_URL", default="https://instagram.com/kazplants"),
-    "phone": config("STORE_PHONE", default="+7 775 756 00 46"),
-    "address": config("STORE_ADDRESS", default="Астана, Казахстан"),
+    "positioning": config("STORE_POSITIONING", default="Питомник растений | Kazplants"),
+    "description": config(
+        "STORE_DESCRIPTION",
+        default=(
+            "Kazplants — питомник растений в Астане. Мы предлагаем большой выбор саженцев, "
+            "многолетних цветов, сеянцев от 2-х лет, а также услуги озеленения под ключ и "
+            "3D-визуализации ландшафтных решений."
+        ),
+    ),
+    "whatsapp_phone": config("WHATSAPP_PHONE", default="77024474743"),
+    "instagram_url": config("INSTAGRAM_URL", default="https://www.instagram.com/kazplants/"),
+    "phone": config("STORE_PHONE", default="+7 702 447 4743"),
+    "address": config("STORE_ADDRESS", default="Mariyam Zhagorkyzy 9, Astana, Kazakhstan 010005"),
+    "city": config("STORE_CITY", default="Астана"),
+    "hours": config("STORE_HOURS", default="10:00–19:00"),
 }
 
 WHATSAPP_PHONE = STORE_PROFILE["whatsapp_phone"]
 
-# Production readiness toggles.
 SECURE_SSL_REDIRECT = env_bool("SECURE_SSL_REDIRECT", default=not DEBUG)
 SESSION_COOKIE_SECURE = env_bool("SESSION_COOKIE_SECURE", default=not DEBUG)
 CSRF_COOKIE_SECURE = env_bool("CSRF_COOKIE_SECURE", default=not DEBUG)
