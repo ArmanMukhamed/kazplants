@@ -55,12 +55,9 @@ def product_detail(request, slug):
     absolute_url = request.build_absolute_uri(product.get_absolute_url())
     whatsapp_message = _(
         "Здравствуйте!\n"
-        "Хочу заказать товар:\n"
-        "{title}\n\n"
-        "Цена:\n"
-        "{price}\n\n"
-        "Ссылка:\n"
-        "{url}"
+        "Хочу заказать товар: {title}\n\n"
+        "Цена: {price}\n\n"
+        "Ссылка: {url}"
     ).format(title=product.title, price=product.price, url=absolute_url)
     whatsapp_url = f"https://wa.me/{settings.WHATSAPP_PHONE}?text={quote(str(whatsapp_message))}"
 
