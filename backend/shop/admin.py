@@ -30,19 +30,25 @@ class ProductAdmin(admin.ModelAdmin):
         "category",
         "price",
         "stock_status",
+        "is_popular",
+        "is_new",
         "is_active",
         "image_preview",
         "created_at",
     )
-    list_filter = ("category", "stock_status", "is_active", "created_at")
-    search_fields = ("title", "slug", "description", "characteristics")
+    list_filter = ("category", "stock_status", "is_popular", "is_new", "is_active", "care_level", "created_at")
+    search_fields = ("title", "slug", "description", "characteristics", "origin_country")
     prepopulated_fields = {"slug": ("title",)}
-    list_editable = ("price", "stock_status", "is_active")
+    list_editable = ("price", "stock_status", "is_popular", "is_new", "is_active")
     inlines = [ProductImageInline]
 
     fieldsets = (
-        ("Основное", {"fields": ("title", "slug", "category", "price", "is_active")}),
-        ("Контент", {"fields": ("description", "characteristics", "image", "stock_status")}),
+        ("Основное", {"fields": ("title", "slug", "category", "price", "is_active", "is_popular", "is_new")}),
+        (
+            "Параметры растения",
+            {"fields": ("stock_status", "height", "diameter", "origin_country", "care_level", "light_requirements", "watering")},
+        ),
+        ("Контент", {"fields": ("description", "characteristics", "image")}),
         ("SEO", {"fields": ("meta_title", "meta_description")}),
     )
 

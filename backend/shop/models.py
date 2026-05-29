@@ -27,6 +27,11 @@ class Product(models.Model):
         PREORDER = "preorder", _("Под заказ")
         OUT_OF_STOCK = "out_of_stock", _("Нет в наличии")
 
+    class CareLevel(models.TextChoices):
+        EASY = "easy", _("Легкий")
+        MEDIUM = "medium", _("Средний")
+        HARD = "hard", _("Требовательный")
+
     title = models.CharField(max_length=255)
     slug = models.SlugField(max_length=280, unique=True)
     category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name="products")
@@ -34,8 +39,16 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     image = models.ImageField(upload_to="products/", blank=True, null=True)
     stock_status = models.CharField(max_length=20, choices=StockStatus.choices, default=StockStatus.IN_STOCK)
+    height = models.DecimalField(max_digits=6, decimal_places=1, blank=True, null=True, help_text=_("Высота в см"))
+    diameter = models.DecimalField(max_digits=6, decimal_places=1, blank=True, null=True, help_text=_("Диаметр в см"))
+    origin_country = models.CharField(max_length=100, blank=True)
+    care_level = models.CharField(max_length=20, choices=CareLevel.choices, blank=True)
+    light_requirements = models.CharField(max_length=150, blank=True)
+    watering = models.CharField(max_length=150, blank=True)
     characteristics = models.TextField(blank=True)
     is_active = models.BooleanField(default=True)
+    is_popular = models.BooleanField(default=False)
+    is_new = models.BooleanField(default=False)
     meta_title = models.CharField(max_length=255, blank=True)
     meta_description = models.CharField(max_length=320, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

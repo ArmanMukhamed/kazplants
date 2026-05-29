@@ -64,6 +64,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "shop.context_processors.site_settings",
             ],
         },
     },
@@ -135,7 +136,7 @@ STATICFILES_DIRS = [
 MEDIA_URL = "media/"
 MEDIA_ROOT = PROJECT_DIR / "media"
 
-WHATSAPP_PHONE = "77000000000"
+WHATSAPP_PHONE = "77757560046"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
