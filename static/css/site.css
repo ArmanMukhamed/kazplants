@@ -1,0 +1,16 @@
+body {
+  background: #f7faf7;
+}
+
+.product-image {
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.thumb {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}

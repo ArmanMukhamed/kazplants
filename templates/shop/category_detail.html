@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block meta_title %}Kazplants | {{ category.name }}{% endblock %}
+
+{% block content %}
+<h1 class="mb-3">{{ category.name }}</h1>
+<div class="row g-3">
+  {% for product in products %}
+    <div class="col-12 col-md-4 col-lg-3">
+      <div class="card h-100">
+        {% if product.image %}
+          <img src="{{ product.image.url }}" class="card-img-top product-image" alt="{{ product.title }}">
+        {% endif %}
+        <div class="card-body">
+          <h2 class="h6 card-title">{{ product.title }}</h2>
+          <p class="mb-2">{{ product.price }} ₸</p>
+          <a href="{{ product.get_absolute_url }}" class="btn btn-outline-success btn-sm">Подробнее</a>
+        </div>
+      </div>
+    </div>
+  {% empty %}
+    <p class="text-muted">Пока нет товаров в этой категории.</p>
+  {% endfor %}
+</div>
+{% endblock %}

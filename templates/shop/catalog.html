@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block meta_title %}Kazplants | {% trans "Каталог" %}{% endblock %}
+
+{% block content %}
+<h1 class="mb-3">{% trans "Каталог" %}</h1>
+
+<form method="get" class="mb-4">
+  <div class="input-group">
+    <input type="search" name="q" value="{{ query }}" class="form-control" placeholder="{% trans 'Поиск по названию' %}">
+    <button class="btn btn-success" type="submit">{% trans "Искать" %}</button>
+  </div>
+</form>
+
+<div class="row g-3">
+  {% for product in products %}
+    <div class="col-12 col-md-4 col-lg-3">
+      <div class="card h-100">
+        {% if product.image %}
+          <img src="{{ product.image.url }}" class="card-img-top product-image" alt="{{ product.title }}">
+        {% endif %}
+        <div class="card-body">
+          <h2 class="h6 card-title">{{ product.title }}</h2>
+          <p class="small text-muted mb-1">{{ product.category.name }}</p>
+          <p class="mb-2">{{ product.price }} ₸</p>
+          <a href="{{ product.get_absolute_url }}" class="btn btn-outline-success btn-sm">{% trans "Подробнее" %}</a>
+        </div>
+      </div>
+    </div>
+  {% empty %}
+    <p class="text-muted">{% trans "Товары не найдены." %}</p>
+  {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block meta_title %}Kazplants | {% trans "Главная" %}{% endblock %}
+
+{% block content %}
+<section class="mb-4">
+  <h1 class="mb-3">{% trans "Интернет-магазин растений по Казахстану" %}</h1>
+  <p class="text-muted">{% trans "Комнатные растения, деревья и саженцы, цветы." %}</p>
+  <a href="{% url 'shop:catalog' %}" class="btn btn-success">{% trans "Перейти в каталог" %}</a>
+</section>
+
+<section class="mb-4">
+  <h2 class="h4">{% trans "Категории" %}</h2>
+  <div class="row g-3">
+    {% for category in categories %}
+      <div class="col-12 col-md-4">
+        <a href="{{ category.get_absolute_url }}" class="card p-3 text-decoration-none text-dark h-100">
+          <strong>{{ category.name }}</strong>
+        </a>
+      </div>
+    {% empty %}
+      <p class="text-muted">{% trans "Категории пока не добавлены." %}</p>
+    {% endfor %}
+  </div>
+</section>
+
+<section>
+  <h2 class="h4">{% trans "Популярные товары" %}</h2>
+  <div class="row g-3">
+    {% for product in featured_products %}
+      <div class="col-12 col-md-3">
+        <div class="card h-100">
+          {% if product.image %}
+            <img src="{{ product.image.url }}" class="card-img-top product-image" alt="{{ product.title }}">
+          {% endif %}
+          <div class="card-body">
+            <h3 class="h6 card-title">{{ product.title }}</h3>
+            <p class="mb-2">{{ product.price }} ₸</p>
+            <a href="{{ product.get_absolute_url }}" class="btn btn-outline-success btn-sm">{% trans "Открыть" %}</a>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <p class="text-muted">{% trans "Товары пока не добавлены." %}</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
