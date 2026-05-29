@@ -90,6 +90,15 @@ STATICFILES_DIRS = [
 MEDIA_URL = "media/"
 MEDIA_ROOT = PROJECT_DIR / "media"
 
-WHATSAPP_PHONE = "77757560046"
+# Centralized public profile and contacts for storefront.
+STORE_PROFILE = {
+    "name": "Kazplants",
+    "whatsapp_phone": "77757560046",
+    "instagram_url": "https://instagram.com/kazplants",
+    "phone": "+7 775 756 00 46",
+    "address": "Астана, Казахстан",
+}
+
+WHATSAPP_PHONE = STORE_PROFILE["whatsapp_phone"]
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

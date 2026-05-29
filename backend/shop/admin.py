@@ -14,6 +14,7 @@ class CategoryAdmin(admin.ModelAdmin):
     list_display = ("name", "slug", "image_preview", "created_at")
     search_fields = ("name", "slug")
     prepopulated_fields = {"slug": ("name",)}
+    list_per_page = 30
 
     def image_preview(self, obj):
         if obj.image:
@@ -41,6 +42,9 @@ class ProductAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("title",)}
     list_editable = ("price", "stock_status", "is_popular", "is_new", "is_active")
     inlines = [ProductImageInline]
+    list_select_related = ("category",)
+    list_per_page = 40
+    save_on_top = True
 
     fieldsets = (
         ("Основное", {"fields": ("title", "slug", "category", "price", "is_active", "is_popular", "is_new")}),
@@ -64,6 +68,7 @@ class ProductAdmin(admin.ModelAdmin):
 class ProductImageAdmin(admin.ModelAdmin):
     list_display = ("product", "image_preview")
     search_fields = ("product__title",)
+    list_per_page = 50
 
     def image_preview(self, obj):
         if obj.image:
