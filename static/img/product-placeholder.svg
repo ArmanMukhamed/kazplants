@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="480" viewBox="0 0 640 480" fill="none">
+  <rect width="640" height="480" fill="#E9F3EA"/>
+  <circle cx="320" cy="190" r="78" fill="#B7D8BD"/>
+  <rect x="266" y="250" width="108" height="110" rx="18" fill="#8DBA98"/>
+  <path d="M320 108C292 142 290 176 320 212C350 176 348 142 320 108Z" fill="#4B8D5A"/>
+  <path d="M285 172C260 196 255 226 280 250C306 224 310 197 285 172Z" fill="#5B9C6A"/>
+  <path d="M355 172C380 196 385 226 360 250C334 224 330 197 355 172Z" fill="#5B9C6A"/>
+  <text x="320" y="420" text-anchor="middle" fill="#5D7C64" font-family="Arial, sans-serif" font-size="24">Нет фото</text>
+</svg>

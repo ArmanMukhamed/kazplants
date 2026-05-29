@@ -1,9 +1,38 @@
 {% extends 'base.html' %}
-{% load i18n %}
 
-{% block meta_title %}Kazplants | {% trans "Контакты" %}{% endblock %}
+{% block meta_title %}{{ site_name }} | Контакты{% endblock %}
 
 {% block content %}
-<h1>{% trans "Контакты" %}</h1>
-<p class="text-muted">WhatsApp: +{{ whatsapp_phone }}</p>
+<section class="catalog-head mb-4">
+  <h1 class="mb-2">Контакты</h1>
+  <p class="text-muted mb-0">Свяжитесь с нами удобным способом. Поможем выбрать растения и оформить заказ.</p>
+</section>
+
+<div class="row g-3">
+  <div class="col-12 col-md-6">
+    <div class="detail-block h-100">
+      <h2 class="h5">Ватсап</h2>
+      <p class="mb-2"><a class="footer-link" href="https://wa.me/{{ site_whatsapp_phone }}" target="_blank" rel="noopener">+{{ site_whatsapp_phone }}</a></p>
+      <a href="https://wa.me/{{ site_whatsapp_phone }}" target="_blank" rel="noopener" class="btn btn-success btn-sm">Написать в Ватсап</a>
+    </div>
+  </div>
+  <div class="col-12 col-md-6">
+    <div class="detail-block h-100">
+      <h2 class="h5">Телефон</h2>
+      <p class="mb-0"><a class="footer-link" href="tel:{{ site_contact_phone|cut:' ' }}">{{ site_contact_phone }}</a></p>
+    </div>
+  </div>
+  <div class="col-12 col-md-6">
+    <div class="detail-block h-100">
+      <h2 class="h5">Instagram</h2>
+      <p class="mb-0"><a class="footer-link" href="{{ site_instagram_url }}" target="_blank" rel="noopener">@kazplants</a></p>
+    </div>
+  </div>
+  <div class="col-12 col-md-6">
+    <div class="detail-block h-100">
+      <h2 class="h5">Адрес</h2>
+      <p class="mb-0">{{ site_contact_city }}</p>
+    </div>
+  </div>
+</div>
 {% endblock %}

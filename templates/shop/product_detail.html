@@ -1,16 +1,17 @@
 {% extends 'base.html' %}
-{% load i18n %}
 
-{% block meta_title %}{% if product.meta_title %}{{ product.meta_title }}{% else %}{{ product.title }} | Kazplants{% endif %}{% endblock %}
+{% block meta_title %}{% if product.meta_title %}{{ product.meta_title }}{% else %}{{ product.title }} | {{ site_name }}{% endif %}{% endblock %}
 {% block meta_description %}{% if product.meta_description %}{{ product.meta_description }}{% else %}{{ product.description|truncatechars:155 }}{% endif %}{% endblock %}
 
 {% block content %}
-<div class="row g-4">
-  <div class="col-12 col-md-6">
+<div class="row g-4 align-items-start">
+  <div class="col-12 col-lg-6">
     {% if product.image %}
-      <img src="{{ product.image.url }}" class="img-fluid rounded border" alt="{{ product.title }}">
+      <img src="{{ product.image.url }}" class="img-fluid rounded-4 border" alt="{{ product.title }}">
+    {% else %}
+      <img src="/static/img/product-placeholder.svg" class="img-fluid rounded-4 border" alt="Нет фото">
     {% endif %}
-    {% if product.gallery.all %}
+    {% if product.gallery.exists %}
       <div class="d-flex gap-2 mt-2 flex-wrap">
         {% for item in product.gallery.all %}
           <img src="{{ item.image.url }}" class="thumb" alt="{{ product.title }} gallery">
@@ -18,20 +19,54 @@
       </div>
     {% endif %}
   </div>
-  <div class="col-12 col-md-6">
-    <h1>{{ product.title }}</h1>
-    <p class="h4 text-success">{{ product.price }} ₸</p>
-    <p><strong>{% trans "Наличие" %}:</strong> {{ product.get_stock_status_display }}</p>
-    <p>{{ product.description|linebreaks }}</p>
 
-    {% if product.characteristics %}
-      <h2 class="h5">{% trans "Характеристики" %}</h2>
-      <p>{{ product.characteristics|linebreaks }}</p>
+  <div class="col-12 col-lg-6">
+    <h1 class="mb-2">{{ product.title }}</h1>
+    <p class="h3 text-success mb-3">{{ product.price }} ₸</p>
+    <p class="mb-3"><span class="stock-badge stock-{{ product.stock_status }}">{{ product.get_stock_status_display }}</span></p>
+
+    <div class="spec-grid mb-4">
+      <div><strong>Артикул</strong><span>{% if product.sku %}{{ product.sku }}{% else %}-{% endif %}</span></div>
+      <div><strong>Бренд</strong><span>{% if product.brand %}{{ product.brand }}{% else %}-{% endif %}</span></div>
+      <div><strong>Размер горшка</strong><span>{% if product.pot_size %}{{ product.pot_size }}{% else %}-{% endif %}</span></div>
+      <div><strong>Высота</strong><span>{% if product.height %}{{ product.height }} см{% else %}-{% endif %}</span></div>
+      <div><strong>Диаметр</strong><span>{% if product.diameter %}{{ product.diameter }} см{% else %}-{% endif %}</span></div>
+      <div><strong>Страна</strong><span>{% if product.origin_country %}{{ product.origin_country }}{% else %}-{% endif %}</span></div>
+      <div><strong>Уровень ухода</strong><span>{% if product.get_care_level_display %}{{ product.get_care_level_display }}{% else %}-{% endif %}</span></div>
+      <div><strong>Свет</strong><span>{% if product.light_requirements %}{{ product.light_requirements }}{% else %}-{% endif %}</span></div>
+      <div><strong>Полив</strong><span>{% if product.watering %}{{ product.watering }}{% else %}-{% endif %}</span></div>
+    </div>
+
+    <a href="{{ whatsapp_url }}" target="_blank" rel="noopener" class="btn btn-success btn-lg w-100 mb-3">
+      Купить через WhatsApp
+    </a>
+
+    {% if product.description %}
+      <section class="detail-block mb-3">
+        <h2 class="h5">Описание</h2>
+        <p>{{ product.description|linebreaks }}</p>
+      </section>
     {% endif %}
 
-    <a href="{{ whatsapp_url }}" target="_blank" rel="noopener" class="btn btn-success">
-      {% trans "Купить через WhatsApp" %}
-    </a>
+    {% if product.characteristics %}
+      <section class="detail-block">
+        <h2 class="h5">Характеристики и уход</h2>
+        <p>{{ product.characteristics|linebreaksbr }}</p>
+      </section>
+    {% endif %}
   </div>
 </div>
+
+<section class="mt-5">
+  <h2 class="h4 mb-3">Похожие товары</h2>
+  <div class="row g-3">
+    {% for product in similar_products %}
+      <div class="col-12 col-sm-6 col-lg-3">
+        {% include 'shop/partials/product_card.html' with product=product %}
+      </div>
+    {% empty %}
+      <p class="text-muted">Похожие товары скоро появятся.</p>
+    {% endfor %}
+  </div>
+</section>
 {% endblock %}

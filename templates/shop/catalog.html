@@ -1,35 +1,68 @@
 {% extends 'base.html' %}
-{% load i18n %}
 
-{% block meta_title %}Kazplants | {% trans "Каталог" %}{% endblock %}
+{% block meta_title %}Kazplants | Каталог{% endblock %}
 
 {% block content %}
-<h1 class="mb-3">{% trans "Каталог" %}</h1>
+<section class="catalog-head mb-4">
+  <h1 class="mb-2">Каталог растений</h1>
+  <p class="text-muted mb-0">Выберите растение по параметрам: категория, цена, наличие, высота и диаметр.</p>
+</section>
 
-<form method="get" class="mb-4">
-  <div class="input-group">
-    <input type="search" name="q" value="{{ query }}" class="form-control" placeholder="{% trans 'Поиск по названию' %}">
-    <button class="btn btn-success" type="submit">{% trans "Искать" %}</button>
+<form method="get" class="filter-panel mb-4" data-catalog-filters>
+  <input type="hidden" name="page" value="1">
+  <div class="d-flex justify-content-end mb-2">
+    <a href="{% url 'shop:catalog' %}" class="clear-filters-link">Очистить фильтры</a>
+  </div>
+  <div class="row g-2">
+    <div class="col-12 col-md-4"><input type="search" name="q" value="{{ query }}" class="form-control" placeholder="Поиск по названию или характеристикам"></div>
+    <div class="col-6 col-md-2"><select name="category" class="form-select"><option value="">Категория</option>{% for category in categories %}<option value="{{ category.slug }}" {% if selected_category == category.slug %}selected{% endif %}>{{ category.name }}</option>{% endfor %}</select></div>
+    <div class="col-6 col-md-2"><select name="stock" class="form-select"><option value="">Наличие</option>{% for code,label in stock_choices %}<option value="{{ code }}" {% if stock == code %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
+    <div class="col-6 col-md-2"><input type="number" step="100" name="min_price" value="{{ min_price }}" class="form-control" placeholder="Цена от"></div>
+    <div class="col-6 col-md-2"><input type="number" step="100" name="max_price" value="{{ max_price }}" class="form-control" placeholder="Цена до"></div>
+    <div class="col-6 col-md-2"><input type="number" step="0.1" name="min_height" value="{{ min_height }}" class="form-control" placeholder="Высота от"></div>
+    <div class="col-6 col-md-2"><input type="number" step="0.1" name="max_height" value="{{ max_height }}" class="form-control" placeholder="Высота до"></div>
+    <div class="col-6 col-md-2"><input type="number" step="0.1" name="min_diameter" value="{{ min_diameter }}" class="form-control" placeholder="Диаметр от"></div>
+    <div class="col-6 col-md-2"><input type="number" step="0.1" name="max_diameter" value="{{ max_diameter }}" class="form-control" placeholder="Диаметр до"></div>
+    <div class="col-12 col-md-4">
+      <select name="sort" class="form-select">
+        <option value="default" {% if sort == 'default' %}selected{% endif %}>По умолчанию</option>
+        <option value="price_asc" {% if sort == 'price_asc' %}selected{% endif %}>Цена по возрастанию</option>
+        <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>Цена по убыванию</option>
+        <option value="title_asc" {% if sort == 'title_asc' %}selected{% endif %}>Название А-Я</option>
+      </select>
+    </div>
   </div>
 </form>
 
 <div class="row g-3">
-  {% for product in products %}
-    <div class="col-12 col-md-4 col-lg-3">
-      <div class="card h-100">
-        {% if product.image %}
-          <img src="{{ product.image.url }}" class="card-img-top product-image" alt="{{ product.title }}">
-        {% endif %}
-        <div class="card-body">
-          <h2 class="h6 card-title">{{ product.title }}</h2>
-          <p class="small text-muted mb-1">{{ product.category.name }}</p>
-          <p class="mb-2">{{ product.price }} ₸</p>
-          <a href="{{ product.get_absolute_url }}" class="btn btn-outline-success btn-sm">{% trans "Подробнее" %}</a>
-        </div>
-      </div>
+  {% for product in page_obj %}
+    <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+      {% include 'shop/partials/product_card.html' with product=product %}
     </div>
   {% empty %}
-    <p class="text-muted">{% trans "Товары не найдены." %}</p>
+    <p class="text-muted">Товары не найдены.</p>
   {% endfor %}
 </div>
+
+{% if page_obj.paginator.num_pages > 1 %}
+<nav class="mt-4" aria-label="Catalog pagination">
+  <ul class="pagination flex-wrap">
+    {% if page_obj.has_previous %}
+      <li class="page-item"><a class="page-link" href="?q={{ query|urlencode }}&category={{ selected_category|urlencode }}&stock={{ stock|urlencode }}&min_price={{ min_price|urlencode }}&max_price={{ max_price|urlencode }}&min_height={{ min_height|urlencode }}&max_height={{ max_height|urlencode }}&min_diameter={{ min_diameter|urlencode }}&max_diameter={{ max_diameter|urlencode }}&sort={{ sort|urlencode }}&page={{ page_obj.previous_page_number }}">Назад</a></li>
+    {% endif %}
+    {% for num in page_obj.paginator.page_range %}
+      {% if page_obj.number == num %}
+        <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+      {% elif num >= page_obj.number|add:'-2' and num <= page_obj.number|add:'2' %}
+        <li class="page-item"><a class="page-link" href="?q={{ query|urlencode }}&category={{ selected_category|urlencode }}&stock={{ stock|urlencode }}&min_price={{ min_price|urlencode }}&max_price={{ max_price|urlencode }}&min_height={{ min_height|urlencode }}&max_height={{ max_height|urlencode }}&min_diameter={{ min_diameter|urlencode }}&max_diameter={{ max_diameter|urlencode }}&sort={{ sort|urlencode }}&page={{ num }}">{{ num }}</a></li>
+      {% endif %}
+    {% endfor %}
+    {% if page_obj.has_next %}
+      <li class="page-item"><a class="page-link" href="?q={{ query|urlencode }}&category={{ selected_category|urlencode }}&stock={{ stock|urlencode }}&min_price={{ min_price|urlencode }}&max_price={{ max_price|urlencode }}&min_height={{ min_height|urlencode }}&max_height={{ max_height|urlencode }}&min_diameter={{ min_diameter|urlencode }}&max_diameter={{ max_diameter|urlencode }}&sort={{ sort|urlencode }}&page={{ page_obj.next_page_number }}">Вперед</a></li>
+    {% endif %}
+  </ul>
+</nav>
+{% endif %}
+
+<script src="/static/js/catalog-filters.js"></script>
 {% endblock %}

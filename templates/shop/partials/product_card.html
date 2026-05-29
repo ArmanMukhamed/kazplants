@@ -1,0 +1,27 @@
+<article class="product-card h-100">
+  {% if product.image %}
+    <img src="{{ product.image.url }}" class="product-image" alt="{{ product.title }}">
+  {% else %}
+    <img src="/static/img/product-placeholder.svg" class="product-image" alt="Нет фото">
+  {% endif %}
+  <div class="p-3 d-flex flex-column h-100">
+    <div class="d-flex justify-content-between align-items-start mb-1">
+      <p class="small text-muted mb-0">{{ product.category.name }}</p>
+      <span class="stock-badge stock-{{ product.stock_status }}">{{ product.get_stock_status_display }}</span>
+    </div>
+    <h3 class="h6 mb-2">{{ product.title }}</h3>
+    <p class="price-tag mb-2">{{ product.price }} ₸</p>
+    <ul class="params-list mb-3">
+      <li>Артикул: {% if product.sku %}{{ product.sku }}{% else %}-{% endif %}</li>
+      <li>Бренд: {% if product.brand %}{{ product.brand }}{% else %}-{% endif %}</li>
+      <li>Горшок: {% if product.pot_size %}{{ product.pot_size }}{% else %}-{% endif %}</li>
+      <li>Высота: {% if product.height %}{{ product.height }} см{% else %}-{% endif %}</li>
+      <li>Диаметр: {% if product.diameter %}{{ product.diameter }} см{% else %}-{% endif %}</li>
+    </ul>
+    <p class="small text-muted mb-3">{{ product.characteristics|linebreaksbr }}</p>
+    <div class="d-grid gap-2 mt-auto">
+      <a href="{{ product.get_absolute_url }}" class="btn btn-outline-success btn-sm">Подробнее</a>
+      <a href="https://wa.me/{{ site_whatsapp_phone }}" target="_blank" rel="noopener" class="btn btn-success btn-sm">Ватсап</a>
+    </div>
+  </div>
+</article>

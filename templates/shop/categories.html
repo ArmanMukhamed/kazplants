@@ -1,19 +1,21 @@
 {% extends 'base.html' %}
-{% load i18n %}
 
-{% block meta_title %}Kazplants | {% trans "Категории" %}{% endblock %}
+{% block meta_title %}Kazplants | Категории{% endblock %}
 
 {% block content %}
-<h1 class="mb-3">{% trans "Категории" %}</h1>
+<h1 class="mb-3">Категории</h1>
 <div class="row g-3">
   {% for category in categories %}
-    <div class="col-12 col-md-4">
-      <a href="{{ category.get_absolute_url }}" class="card p-3 text-decoration-none text-dark h-100">
+    <div class="col-6 col-md-4 col-lg-3">
+      <a href="{{ category.get_absolute_url }}" class="category-tile text-decoration-none h-100">
+        {% if category.image %}
+          <img src="{{ category.image.url }}" alt="{{ category.name }}" class="category-tile-image">
+        {% endif %}
         <strong>{{ category.name }}</strong>
       </a>
     </div>
   {% empty %}
-    <p class="text-muted">{% trans "Категории пока не добавлены." %}</p>
+    <p class="text-muted">Категории пока не добавлены.</p>
   {% endfor %}
 </div>
 {% endblock %}

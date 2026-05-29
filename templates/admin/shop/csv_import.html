@@ -1,0 +1,12 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+  <h1>Импорт товаров из CSV</h1>
+  <p>Поддерживаемые колонки: title, slug, sku, brand, pot_size, category, description, price, stock_status, height, diameter, origin_country, care_level, light_requirements, watering, characteristics, is_active, is_popular, is_new, meta_title, meta_description.</p>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="default">Загрузить</button>
+    <a href="{% url 'admin:shop_product_changelist' %}">Назад к товарам</a>
+  </form>
+{% endblock %}

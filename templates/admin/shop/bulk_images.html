@@ -1,0 +1,12 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+  <h1>Массовая загрузка изображений</h1>
+  <p>Загрузите ZIP. Имя файла должно совпадать с артикулом (`sku`) или slug товара, например `SKU123.jpg` или `fikus-bendzhamina.jpg`.</p>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="default">Загрузить</button>
+    <a href="{% url 'admin:shop_product_changelist' %}">Назад к товарам</a>
+  </form>
+{% endblock %}

@@ -1,7 +1,42 @@
+from io import BytesIO
+
+from django.core.files.base import ContentFile
 from django.db import models
 from django.urls import reverse
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
+from PIL import Image
+
+
+def compress_image_field(image_field):
+    if not image_field or image_field._committed:
+        return
+    try:
+        img = Image.open(image_field)
+    except Exception:
+        return
+
+    img_format = (img.format or "JPEG").upper()
+    if img.mode in ("RGBA", "P"):
+        img = img.convert("RGB")
+
+    if img.width > 1600 or img.height > 1600:
+        img.thumbnail((1600, 1600))
+
+    buffer = BytesIO()
+    filename_root = image_field.name.rsplit(".", 1)[0]
+
+    if img_format in {"PNG"}:
+        img.save(buffer, format="PNG", optimize=True)
+        ext = "png"
+    elif img_format in {"WEBP"}:
+        img.save(buffer, format="WEBP", quality=82, optimize=True)
+        ext = "webp"
+    else:
+        img.save(buffer, format="JPEG", quality=82, optimize=True)
+        ext = "jpg"
+
+    image_field.save(f"{filename_root}.{ext}", ContentFile(buffer.getvalue()), save=False)
 
 
 class Category(models.Model):
@@ -20,6 +55,10 @@ class Category(models.Model):
 
     def get_absolute_url(self):
         return reverse("shop:category_detail", kwargs={"slug": self.slug})
+
+    def save(self, *args, **kwargs):
+        compress_image_field(self.image)
+        super().save(*args, **kwargs)
 
 
 class Product(models.Model):
@@ -78,6 +117,7 @@ class Product(models.Model):
                 idx += 1
                 slug = f"{base_slug}-{idx}"
             self.slug = slug
+        compress_image_field(self.image)
         super().save(*args, **kwargs)
 
 
@@ -91,3 +131,7 @@ class ProductImage(models.Model):
 
     def __str__(self):
         return f"{self.product.title} image #{self.pk}"
+
+    def save(self, *args, **kwargs):
+        compress_image_field(self.image)
+        super().save(*args, **kwargs)

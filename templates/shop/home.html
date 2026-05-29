@@ -1,49 +1,78 @@
 {% extends 'base.html' %}
-{% load i18n %}
 
-{% block meta_title %}Kazplants | {% trans "Главная" %}{% endblock %}
+{% block meta_title %}{{ site_name }} | Главная{% endblock %}
 
 {% block content %}
-<section class="mb-4">
-  <h1 class="mb-3">{% trans "Интернет-магазин растений по Казахстану" %}</h1>
-  <p class="text-muted">{% trans "Комнатные растения, деревья и саженцы, цветы." %}</p>
-  <a href="{% url 'shop:catalog' %}" class="btn btn-success">{% trans "Перейти в каталог" %}</a>
+<section class="hero-block mb-5">
+  <div class="hero-gradient"></div>
+  <div class="hero-content">
+    <p class="hero-tag">{{ site_name }}</p>
+    <h1>Растения для дома и сада</h1>
+    <p>Комнатные растения, цветы и саженцы с доставкой по Казахстану</p>
+    <div class="d-flex flex-wrap gap-2">
+      <a href="{% url 'shop:catalog' %}" class="btn btn-light btn-lg">Смотреть каталог</a>
+      <a href="{{ hero_whatsapp_url }}" target="_blank" rel="noopener" class="btn btn-outline-light btn-lg">Написать в Ватсап</a>
+    </div>
+  </div>
 </section>
 
-<section class="mb-4">
-  <h2 class="h4">{% trans "Категории" %}</h2>
+<section class="mb-5">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="h4 mb-0">Категории товаров</h2>
+    <a href="{% url 'shop:categories' %}" class="small text-decoration-none">Смотреть все</a>
+  </div>
   <div class="row g-3">
     {% for category in categories %}
-      <div class="col-12 col-md-4">
-        <a href="{{ category.get_absolute_url }}" class="card p-3 text-decoration-none text-dark h-100">
-          <strong>{{ category.name }}</strong>
+      <div class="col-6 col-md-4 col-lg-3">
+        <a href="{{ category.get_absolute_url }}" class="category-tile text-decoration-none">
+          {% if category.image %}<img src="{{ category.image.url }}" alt="{{ category.name }}" class="category-tile-image">{% endif %}
+          <span>{{ category.name }}</span>
         </a>
       </div>
-    {% empty %}
-      <p class="text-muted">{% trans "Категории пока не добавлены." %}</p>
     {% endfor %}
   </div>
 </section>
 
-<section>
-  <h2 class="h4">{% trans "Популярные товары" %}</h2>
+<section class="mb-5">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="h4 mb-0">Популярные растения</h2>
+    <a href="{% url 'shop:catalog' %}" class="small text-decoration-none">Весь каталог</a>
+  </div>
   <div class="row g-3">
-    {% for product in featured_products %}
-      <div class="col-12 col-md-3">
-        <div class="card h-100">
-          {% if product.image %}
-            <img src="{{ product.image.url }}" class="card-img-top product-image" alt="{{ product.title }}">
-          {% endif %}
-          <div class="card-body">
-            <h3 class="h6 card-title">{{ product.title }}</h3>
-            <p class="mb-2">{{ product.price }} ₸</p>
-            <a href="{{ product.get_absolute_url }}" class="btn btn-outline-success btn-sm">{% trans "Открыть" %}</a>
-          </div>
-        </div>
+    {% for product in popular_products %}
+      <div class="col-12 col-sm-6 col-lg-3">
+        {% include 'shop/partials/product_card.html' with product=product %}
       </div>
     {% empty %}
-      <p class="text-muted">{% trans "Товары пока не добавлены." %}</p>
+      <p class="text-muted">Популярные товары появятся после наполнения каталога.</p>
     {% endfor %}
   </div>
+</section>
+
+<section class="mb-5">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="h4 mb-0">Новые поступления</h2>
+  </div>
+  <div class="row g-3">
+    {% for product in new_products %}
+      <div class="col-12 col-sm-6 col-lg-3">
+        {% include 'shop/partials/product_card.html' with product=product %}
+      </div>
+    {% empty %}
+      <p class="text-muted">Новые поступления будут отображаться здесь.</p>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="row g-3 mb-5">
+  <div class="col-12 col-md-4"><div class="info-card"><h3>Почему выбирают {{ site_name }}</h3><p>Тщательный отбор растений, быстрая доставка и помощь по уходу.</p></div></div>
+  <div class="col-12 col-md-4"><div class="info-card"><h3>Как заказать</h3><p>Выберите товар, откройте карточку и отправьте заявку через Ватсап.</p></div></div>
+  <div class="col-12 col-md-4"><div class="info-card"><h3>Поддержка</h3><p>Подскажем, какое растение подойдет по освещению и уходу.</p></div></div>
+</section>
+
+<section class="cta-strip">
+  <h2>Поможем подобрать растение</h2>
+  <p>Напишите нам в Ватсап, и мы подберем вариант под ваш интерьер и бюджет.</p>
+  <a href="{{ hero_whatsapp_url }}" target="_blank" rel="noopener" class="btn btn-success">Получить консультацию</a>
 </section>
 {% endblock %}
