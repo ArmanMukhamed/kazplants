@@ -4,7 +4,6 @@ from django.conf import settings
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, render
-from django.utils.translation import gettext_lazy as _
 
 from .models import Category, Product
 
@@ -45,7 +44,12 @@ def catalog(request):
     categories_qs = Category.objects.all()
 
     if query:
-        products = products.filter(Q(title__icontains=query) | Q(characteristics__icontains=query))
+        products = products.filter(
+            Q(title__icontains=query)
+            | Q(characteristics__icontains=query)
+            | Q(sku__icontains=query)
+            | Q(brand__icontains=query)
+        )
 
     if selected_category:
         products = products.filter(category__slug=selected_category)
@@ -124,7 +128,7 @@ def product_detail(request, slug):
     )
     absolute_url = request.build_absolute_uri(product.get_absolute_url())
 
-    whatsapp_message = _(
+    whatsapp_message = (
         "Здравствуйте!\n"
         "Хочу заказать товар: {title}\n"
         "Цена: {price}\n"
@@ -159,7 +163,7 @@ def about(request):
 
 
 def contacts(request):
-    return render(request, "shop/contacts.html", {"whatsapp_phone": settings.WHATSAPP_PHONE})
+    return render(request, "shop/contacts.html")
 
 
 def custom_404(request, exception):
