@@ -93,7 +93,11 @@ class Command(BaseCommand):
                 "care_level": care_level,
                 "light_requirements": light_requirements,
                 "watering": watering,
-                "characteristics": f"Категория: {category_name}\\nСвет: {light_requirements}\\nПолив: {watering}",
+                "characteristics": (
+                    f"""Категория: {category_name}
+Свет: {light_requirements}
+Полив: {watering}"""
+                ),
                 "is_active": True,
                 "is_popular": is_popular,
                 "is_new": is_new,
